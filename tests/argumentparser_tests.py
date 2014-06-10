@@ -19,9 +19,3 @@ class ArgumentParserTests(unittest.TestCase):
 	def test_argumentparser_secret(self):
 		args = doorman.main.create_parser().parse_args(["-s"])
 		self.assertEquals(args.status, True)
-
-	def test_argumentparser_empty(self):
-		devnull = open(os.devnull, 'wb')
-		with mock.patch('sys.stderr', devnull):
-			with self.assertRaises(SystemExit):
-				doorman.main.create_parser().parse_args()
