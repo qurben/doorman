@@ -69,12 +69,12 @@ class DoormanTest(unittest.TestCase):
         self.assertEqual("{{pass}} and {{pass2}}", self.txt.read())
 
     def test_doorman_different_unhide(self):
-        self.txt.write("{{pass}} and {{pass2}}", self.txt.read())
+        self.txt.write("{{pass}} and {{pass2}}")
         self.txt.seek(0)
 
         Doorman(False, self.yml.name).run()
         
-        self.assertEqual("hfayjy2w and gSJTkzJ3")
+        self.assertEqual("hfayjy2w and gSJTkzJ3", self.txt.read())
 
     def test_doorman_readfail(self):
         os.chmod(self.txt.name, 0o200)

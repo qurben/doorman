@@ -14,7 +14,7 @@ class ArgumentParserTests(unittest.TestCase):
 		args = doorman.main.create_parser().parse_args(["-u"])
 
 		self.assertEquals(args.status, False)
-		self.assertEquals(args.config_file, doorman.main.DEFAULT_CONFIG_PATH)
+		self.assertEquals(args.config_file, doorman.main.DEFAULT_CONFIG_FILE)
 
 	def test_argumentparser_secret(self):
 		args = doorman.main.create_parser().parse_args(["-s"])
