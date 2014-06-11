@@ -32,6 +32,7 @@ class DoormanConfig(object):
         Config parser method for parsing YAML
         :return type: list of dict(name, secret, file_name)
         """
+
         with open(self.__config_file, "r") as f:
             lines = f.read()
 
@@ -85,7 +86,7 @@ class Doorman(object):
         except IOError:
             raise DoormanException("File not read", str(file_path))
 
-
+        logging.info("Replaced %d occurances of %s." % (full_text.count(old), old))
         full_text = full_text.replace(old, new)
 
         try:

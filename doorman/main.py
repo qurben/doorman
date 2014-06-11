@@ -6,7 +6,10 @@ DEFAULT_CONFIG_FILE = os.path.join(DEFAULT_CONFIG_PATH, "doorman.yml")
 DEFAULT_CONFIG = """test_file:
  test_secret: my secret thing"""
 
-def is_default_config():
+def is_default_config(config_file):
+    if not config_file == DEFAULT_CONFIG_FILE:
+        return False
+
     if not os.path.exists(DEFAULT_CONFIG_PATH):
         os.makedirs(DEFAULT_CONFIG_PATH)
 
@@ -15,7 +18,7 @@ def is_default_config():
             f.write(DEFAULT_CONFIG)
         os.chmod(DEFAULT_CONFIG_FILE, 0o600)
 
-        return False
+        return True
 
     return open(DEFAULT_CONFIG_FILE, "r").read() == DEFAULT_CONFIG
 
@@ -27,7 +30,7 @@ def create_parser():
     group.add_argument('-s', '--secret', action="store_true", dest="status", help='Hide all secret things')
     parser.add_argument('-v', '--verbose', action="store_true", dest="verbose", help='Show all messages')
     parser.add_argument('-c', '--config', action="store", dest="config_file",
-                        default=DEFAULT_CONFIG_PATH, help='Config file')
+                        default=DEFAULT_CONFIG_FILE, help='Config file')
     return parser
 
 def main():
@@ -42,7 +45,7 @@ def main():
     else:
         logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.WARN)
 
-    if not is_default_config():
+    if not is_default_config(args.config_file):
         try:
             doorman = Doorman(args.status, os.path.abspath(args.config_file))
             doorman.run()

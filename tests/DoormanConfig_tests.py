@@ -40,6 +40,10 @@ class DoormanConfigTest(unittest.TestCase):
  pass2: yaml2""" % (self.txt.name, self.txt2.name))
         self.yml.seek(0)
 
+        parsed = DoormanConfig(self.yml.name).parseYAML()
+
+        self.assertEqual(parsed, {self.txt.name: {'pass': 'yaml'}, self.txt2.name: {'pass2': 'yaml2'}})
+
     def test_parseYAML_empty(self):
         with self.assertRaises(DoormanException) as e:
             parsed = DoormanConfig(self.yml.name).parseYAML()

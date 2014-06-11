@@ -11,11 +11,12 @@ class DoormanTest(unittest.TestCase):
         self.txt2 = tempfile.NamedTemporaryFile()
 
         self.yml.write("""%s:
- pass: yaml""" % self.txt.name)
+ pass: hfayjy2w
+ pass2: gSJTkzJ3""" % self.txt.name)
         self.yml.seek(0)
 
     def test_doorman_hide(self):
-        self.txt.write("""ayamlb""")
+        self.txt.write("""ahfayjy2wb""")
         self.txt.seek(0)
 
         dm = Doorman(True, self.yml.name)
@@ -31,7 +32,7 @@ class DoormanTest(unittest.TestCase):
         dm = Doorman(False, self.yml.name)
         dm.run()
 
-        self.assertEqual("ayamlb", self.txt.read())
+        self.assertEqual("ahfayjy2wb", self.txt.read())
 
     def test_doorman_nohide(self):
         self.txt.write("hello")
@@ -41,6 +42,39 @@ class DoormanTest(unittest.TestCase):
         dm.run()
 
         self.assertEqual("hello", self.txt.read())
+
+    def test_doorman_multiple_hide(self):
+        self.txt.write("hfayjy2w and hfayjy2w")
+        self.txt.seek(0)
+
+        dm = Doorman(True, self.yml.name)
+        dm.run()
+
+        self.assertEqual("{{pass}} and {{pass}}", self.txt.read())
+
+    def test_doorman_multiple_nohide(self):
+        self.txt.write("{{pass}} and {{pass}}")
+        self.txt.seek(0)
+
+        Doorman(False, self.yml.name).run()
+
+        self.assertEqual("hfayjy2w and hfayjy2w", self.txt.read())
+
+    def test_doorman_different_hide(self):
+        self.txt.write("hfayjy2w and gSJTkzJ3")
+        self.txt.seek(0)
+
+        Doorman(True, self.yml.name).run()
+
+        self.assertEqual("{{pass}} and {{pass2}}", self.txt.read())
+
+    def test_doorman_different_unhide(self):
+        self.txt.write("{{pass}} and {{pass2}}", self.txt.read())
+        self.txt.seek(0)
+
+        Doorman(False, self.yml.name).run()
+        
+        self.assertEqual("hfayjy2w and gSJTkzJ3")
 
     def test_doorman_readfail(self):
         os.chmod(self.txt.name, 0o200)
