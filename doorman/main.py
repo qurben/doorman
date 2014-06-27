@@ -6,6 +6,15 @@ DEFAULT_CONFIG_FILE = os.path.join(DEFAULT_CONFIG_PATH, "doorman.yml")
 DEFAULT_CONFIG = ""
 
 def is_default_config(config_file):
+    """
+    Return whether or not config_file is the default config file.
+
+    config_file is the default config file when:
+    - config_file is at the location of DEFAULT_CONFIG_FILE
+    - The contents of config_file are the same as the value of DEFAULT_CONFIG
+
+    :param config_file: string
+    """
     if not config_file == DEFAULT_CONFIG_FILE:
         return False
 
@@ -22,6 +31,22 @@ def is_default_config(config_file):
     return open(DEFAULT_CONFIG_FILE, "r").read() == DEFAULT_CONFIG
 
 def create_parser():
+    """
+    Create an argument parser for doorman. 
+
+    This is the structure:
+    usage: doorman [-h] [-u | -s] [-v] [-c CONFIG_FILE]
+
+    Doorman keeps your secret things
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -u, --unsecret        Open all secret things
+      -s, --secret          Hide all secret things
+      -v, --verbose         Show all messages
+      -c CONFIG_FILE, --config CONFIG_FILE
+                            Config file
+    """
     parser = argparse.ArgumentParser(description='Doorman keeps your secret things')
     parser.set_defaults(status=True)
     group = parser.add_mutually_exclusive_group(required=False)
@@ -40,9 +65,9 @@ def main():
     args = parser.parse_args()
 
     if args.verbose:
-        logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
+        logging.basicConfig(format='%(levelname)s : %(message)s', level=logging.INFO)
     else:
-        logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.WARN)
+        logging.basicConfig(format='%(levelname)s : %(message)s', level=logging.WARN)
 
     if not is_default_config(args.config_file):
         try:

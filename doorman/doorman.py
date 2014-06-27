@@ -8,11 +8,12 @@ class DoormanException(Exception):
         """
         DoormanException class constructor
         :param name: string
+        :param message: string
         """
         self.name = name
         self.message = message
 
-        Exception.__init__(self, '%s: %s' % (self.name,self.message))
+        Exception.__init__(self, '%s : %s' % (self.name,self.message))
 
 
 class DoormanConfig(object):
@@ -30,7 +31,11 @@ class DoormanConfig(object):
     def parseYAML(self):
         """
         Config parser method for parsing YAML
-        :return type: list of dict(name, secret, file_name)
+
+        Also checks the YAML for errors, if it is empty
+        and if all files mentioned in the config exist
+
+        :return type: dict of {file_path: [<replacements>], ..}
         """
 
         with open(self.__config_file, "r") as f:
@@ -39,14 +44,14 @@ class DoormanConfig(object):
         try:
             self.__configs = yaml.load(lines)
         except yaml.scanner.ScannerError, e:
-            raise DoormanException("Error parsing config YAML", e)
+            raise DoormanException("parse : Error parsing config YAML", e)
 
         if self.__configs is None:
-            raise DoormanException("Error: empty config", None)
+            raise DoormanException("parse : empty config", None)
 
         for location in self.__configs:
             if not os.path.exists(location):
-                raise DoormanException("File in config not found", location)
+                raise DoormanException("parse : File in config not found", location)
 
 
         return self.__configs;
@@ -67,6 +72,8 @@ class Doorman(object):
     def run(self):
         """
         Doorman runner method
+
+        Hides or unhides the values
         """
         if self.__status:
             self.__hide()
@@ -75,7 +82,8 @@ class Doorman(object):
 
     def __open_and_replace(self, file_path, old, new):
         """
-        Method for open and raplace old string with new string
+        Method for open and replace old string with new string
+
         :param file_path: file path
         :param old: old string
         :param new: new string
@@ -84,20 +92,21 @@ class Doorman(object):
             with open(file_path, "r") as f:
                 full_text = f.read()
         except IOError:
-            raise DoormanException("File not read", str(file_path))
+            raise DoormanException("replace : Failed to read file", str(file_path))
 
-        logging.info("Replaced %d occurances of %s." % (full_text.count(old), old))
+        logging.info("replace : Replaced %d occurances of %s." % (full_text.count(old), old))
         full_text = full_text.replace(old, new)
 
         try:
             with open(file_path, "w") as f:
                 f.write(full_text)
         except IOError:
-            raise DoormanException("File not write", str(file_path))
+            raise DoormanException("replace : Failed to write file", str(file_path))
 
     def __wrapper(self, s):
         """
         Wrapper method for strings
+
         :param s: string to be wrapped
         :return type: string
         """
@@ -112,7 +121,7 @@ class Doorman(object):
                 self.__open_and_replace(location,
                                         secret,
                                         self.__wrapper(name))
-                logging.info("hide: %s" % location)
+                logging.info("hide : %s" % location)
 
     def __unhide(self):
         """
