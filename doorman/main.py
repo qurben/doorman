@@ -24,7 +24,8 @@ def is_default_config(config_file):
     if not os.path.exists(DEFAULT_CONFIG_FILE):
         with open(DEFAULT_CONFIG_FILE, "w") as f:
             f.write(DEFAULT_CONFIG)
-        os.chmod(DEFAULT_CONFIG_FILE, 0o600)
+        os.chmod(DEFAULT_CONFIG_FILE, 0o600) 
+        # 0o600 is -rw------- which means rw for only the owner, this is the safest
 
         return True
 
