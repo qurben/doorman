@@ -3,8 +3,7 @@ from doorman import Doorman, DoormanException
 
 DEFAULT_CONFIG_PATH = appdirs.user_config_dir("doorman")
 DEFAULT_CONFIG_FILE = os.path.join(DEFAULT_CONFIG_PATH, "doorman.yml")
-DEFAULT_CONFIG = """test_file:
- test_secret: my secret thing"""
+DEFAULT_CONFIG = ""
 
 def is_default_config(config_file):
     if not config_file == DEFAULT_CONFIG_FILE:
